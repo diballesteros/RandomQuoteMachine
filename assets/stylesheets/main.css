@@ -18,6 +18,10 @@ a{
 a:hover{
     color: inherit;
 }
+
+p{
+    display:inline-block;
+}
 /*
   ========================================
   quoteBox
@@ -50,6 +54,11 @@ a:hover{
 .new-quote{
     background-color: rgb(165, 211, 232);
 }
+
+.fa-quote-left:before {
+    content: "\f10d";
+}
+
 
 /*
   ========================================
