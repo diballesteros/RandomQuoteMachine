@@ -1,5 +1,6 @@
 <!DOCTYPE <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -9,87 +10,124 @@
     <!-- Favicon-->
     <link rel="icon" href="assets/images/favicon-quote-left.ico">
 
-   <!-- Bootstrap -->
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
-    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M"
+        crossorigin="anonymous">
+
     <!-- Custom CSS -->
     <link href="assets/stylesheets/main.css" rel="stylesheet">
 </head>
+
 <body>
     <!-- Main content -->
-    <div class="container p-5">
-        
+    <div class="container px-5 pt-5">
+
         <div class="row">
-            
+
             <div class="col">
                 <!--Placeholder -->
             </div>
 
-            <!--Box -->
+            <!--Quote Box -->
             <div class="col-6">
                 <div class="quoteBox border border-light rounded pt-2" id="quoteBox">
-                    <div class="text-center">                           
+                    <div class="text-center">
                         <span id="quote"></span>
                     </div>
-                    
-                    <div class="text-right pr-5 pb-3" id="author">
-                        <p>Author</p>
-                    </div>
+
+                    <div class="text-right pr-5 pb-3" id="author"></div>
 
                     <div class="row justify-content-around" id="buttons">
-                            <div class="tweet buttons">
 
-                                    <a href="" title="Tweet this quote!" id="tweet">
-                                        <i class="fa fa-twitter fa-5" aria-hidden="true"></i>
-                                    </a>
+                        <div class="tweet buttons">
+                            <a href="" title="Tweet this quote!" id="tweet">
+                                <i class="fa fa-twitter fa-5" aria-hidden="true"></i>
+                            </a>
+                        </div>
 
-                            </div>
-                            
-                            <div class="pb-2">
-                                    <button type="button" class="btn new-quote buttons" id="button">New Quote</button>
-                            </div>                           
-                        
+                        <div class="pb-2">
+                            <button type="button" class="btn new-quote buttons" id="button">New Quote</button>
+                        </div>
+
                     </div>
-                 </div>
+                </div>
             </div>
 
-            <div class= "col">
+            <div class="col">
                 <!--Placeholder -->
             </div>
-                
+
         </div>
     </div>
-<!--Footer-->
-    <footer>
-
+    <!--Footer-->
+    <footer class="text-center">
+        by Diego Ballesteros
     </footer>
 
 </body>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
-<script>
-jQuery( function( $ ) {
-$("#button").on('click', function(e) {
-    e.preventDefault();
-    $.ajax( {
-      url: 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
-      success: function(data) {
-        var post = data.shift(); // The data is an array of posts. Grab the first one.
-        $("#quote").html(post.content);
-        $("#author").text(post.title);
-
-       $("#tweet").attr("href", "https://twitter.com/intent/tweet?text=" + encodeURIComponent(post.content) +  encodeURIComponent(" - " +post.title));
-
-        // If the Source is available, use it. Otherwise hide it.
-        if (typeof post.custom_meta !== 'undefined' && typeof post.custom_meta.Source !== 'undefined') {
-          $('#quote-source').html('Source:' + post.custom_meta.Source);
-        } else {
-          $('#quote-source').text('');
-        }
-      },
-      cache: false
-    });
-  });
-});
-  </script>
 <script src="https://use.fontawesome.com/d18312fe6c.js"></script>
+<script>
+    (function () {
+        /*
+        Decode HTML symbols:
+        Create an element, insert HTML, extract the value
+        */
+        function decodeHtml(html) {
+            var txt = document.createElement("textarea");
+            txt.innerHTML = html;
+            return txt.value;
+        }
+
+        /*
+        Start the page with the quote
+        */
+        function newQuote() {
+            $.ajax({
+                url: 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+                success: function (data) {
+
+                    // Grab the quote and the author
+                    var post = data.shift(); // The data is an array of posts. Grab the first one.
+                    $("#quote").html(post.content);
+                    $("#author").text(post.title);
+
+                    // Decode the HTML, replace HTML tags
+                    var str = decodeHtml(post.content);
+                    str = str.replace(/<(?:.|\n)*?>/gm, '');
+
+                    //Change the quote and author to a URL tag
+                    $("#tweet").attr("href", "https://twitter.com/intent/tweet?text=" + encodeURIComponent(str) + encodeURIComponent(" - " + post.title));
+
+                    // If the Source is available, use it. Otherwise hide it.
+                    if (typeof post.custom_meta !== 'undefined' && typeof post.custom_meta.Source !== 'undefined') {
+                        $('#quote-source').html('Source:' + post.custom_meta.Source);
+                    } else {
+                        $('#quote-source').text('');
+                    }
+                },
+                cache: false
+            });
+        };
+
+
+        /*
+        Generate New quote with 'New Quote' button
+        */
+        $("#button").on('click', function (e) {
+            e.preventDefault();
+            newQuote();
+        });
+
+        function execute() {
+            newQuote();
+        };
+
+        execute();
+
+    })();
+</script>
+
+
+
 </html>

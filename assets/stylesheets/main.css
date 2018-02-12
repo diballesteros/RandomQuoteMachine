@@ -1,5 +1,3 @@
-
-
 /*
   ========================================
   Custom Styles
@@ -21,6 +19,11 @@ a:hover{
 
 p{
     display:inline-block;
+}
+
+footer {
+    color: whitesmoke;
+
 }
 /*
   ========================================
@@ -54,11 +57,6 @@ p{
 .new-quote{
     background-color: rgb(165, 211, 232);
 }
-
-.fa-quote-left:before {
-    content: "\f10d";
-}
-
 
 /*
   ========================================
