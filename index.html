@@ -40,7 +40,7 @@
                     <div class="row justify-content-around" id="buttons">
 
                         <div class="tweet buttons">
-                            <a href="" title="Tweet this quote!" id="tweet">
+                            <a title="Tweet this quote!" id="tweet">
                                 <i class="fa fa-twitter fa-5" aria-hidden="true"></i>
                             </a>
                         </div>
@@ -69,24 +69,23 @@
 <script src="https://use.fontawesome.com/d18312fe6c.js"></script>
 <script>
     (function () {
-        /*
-        Decode HTML symbols:
-        Create an element, insert HTML, extract the value
-        */
+
+        var urly; //variable to hold URL with quote and author in appropiate format
+
+        //Decode HTML symbols:
+        //Create an element, insert HTML, extract the value
         function decodeHtml(html) {
             var txt = document.createElement("textarea");
             txt.innerHTML = html;
             return txt.value;
         }
 
-        /*
-        Start the page with the quote
-        */
+        // Generate Quote
         function newQuote() {
             $.ajax({
-                url: 'http://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1',
+                url:
+                    "https://quotesondesign.com/wp-json/posts?filter[orderby]=rand&filter[posts_per_page]=1",
                 success: function (data) {
-
                     // Grab the quote and the author
                     var post = data.shift(); // The data is an array of posts. Grab the first one.
                     $("#quote").html(post.content);
@@ -94,38 +93,49 @@
 
                     // Decode the HTML, replace HTML tags
                     var str = decodeHtml(post.content);
-                    str = str.replace(/<(?:.|\n)*?>/gm, '');
+                    str = str.replace(/<(?:.|\n)*?>/gm, "");
 
-                    //Change the quote and author to a URL tag
-                    $("#tweet").attr("href", "https://twitter.com/intent/tweet?text=" + encodeURIComponent(str) + encodeURIComponent(" - " + post.title));
+                    //Change the quote and author to a twitter-URL format and insert into variable
+                    urly = "https://twitter.com/intent/tweet?text=" +
+                        encodeURIComponent(str) +
+                        encodeURIComponent(" - " + post.title);
 
                     // If the Source is available, use it. Otherwise hide it.
-                    if (typeof post.custom_meta !== 'undefined' && typeof post.custom_meta.Source !== 'undefined') {
-                        $('#quote-source').html('Source:' + post.custom_meta.Source);
+                    if (
+                        typeof post.custom_meta !== "undefined" &&
+                        typeof post.custom_meta.Source !== "undefined"
+                    ) {
+                        $("#quote-source").html("Source:" + post.custom_meta.Source);
                     } else {
-                        $('#quote-source').text('');
+                        $("#quote-source").text("");
                     }
                 },
                 cache: false
             });
-        };
+        }
 
-
-        /*
-        Generate New quote with 'New Quote' button
-        */
-        $("#button").on('click', function (e) {
+        // Generate New quote with 'New Quote' button
+        $("#button").on("click", function (e) {
             e.preventDefault();
             newQuote();
         });
+        
+        // Call function tweet upon clicking icon
+        document.getElementById("tweet").onclick = tweet;
 
+        // Open new Window for tweet
+        function tweet() {
+            window.open(urly);
+        }
+
+        // Start the page with a new quote
         function execute() {
             newQuote();
-        };
+        }
 
         execute();
-
     })();
+
 </script>
 
 
